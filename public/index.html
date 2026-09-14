@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VCode — Workspace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ACTIVATION LOCK SCREEN (PREMIUM BLACK THEME) -->
+  <div id="activationOverlay" class="activation-overlay" hidden>
+
+    <div class="auth-brand">
+      <span>&lt;/&gt;</span>VCode
+    </div>
+
+    <div class="activation-card">
+      <div class="auth-mascot-notch" id="authMascotWrap">
+        <img id="authMascotImg" src="avatar/white/idle.gif" alt="VCode Mascot" class="auth-mascot-img">
+      </div>
+      <h2>Workspace Access</h2>
+      <p class="auth-subtitle">Enter your team activation key to access the outreach &amp; leads dashboard.</p>
+
+      <form id="activationForm" class="auth-form">
+        <div class="auth-input-wrap">
+          <input type="password" id="activationKeyInput" class="auth-input" placeholder="Enter activation key..." required autocomplete="current-password" autofocus>
+        </div>
+        <p id="activationError" class="auth-error-msg" hidden></p>
+        <button class="auth-submit-btn" type="submit">Unlock Workspace &#8594;</button>
+      </form>
+    </div>
+
+    <p class="auth-lockline">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Restricted access &middot; VCode team only
+    </p>
+
+  </div>
+
+  <aside>
+    <a class="brand" href="#emails">
+      <span>&lt;/&gt;</span>VCode
+    </a>
+    <nav>
+      <a href="#emails" data-page="emails" class="active">
+        <i class="nav-icon nav-mail"></i>
+        <span>Emails</span>
+        <b id="inboxCount">0</b>
+      </a>
+      <a href="#leads" data-page="leads">
+        <i class="nav-icon nav-leads"></i>
+        <span>Leads</span>
+      </a>
+      <a href="javascript:void(0)" id="openNotificationsBtn">
+        <i class="nav-icon nav-bell"></i>
+        <span>Email Alerts</span>
+      </a>
+    </nav>
+    <div class="side-note">
+      <div class="side-note-header">
+        <i></i>
+        <strong>Workspace</strong>
+      </div>
+      <small>CRM and outreach are managed separately.</small>
+      <button id="lockWorkspaceBtn" type="button" style="margin-top: 12px; background: rgba(255,255,255,0.06); border: 1px solid var(--sidebar-border); color: #94a3b8; width: 100%; border-radius: var(--radius-sm); padding: 7px 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px;">
+        <i class="nav-icon nav-lock"></i>
+        <span>Lock Session</span>
+      </button>
+    </div>
+  </aside>
+
+  <main>
+    <!-- EMAILS PAGE -->
+    <section id="emailsPage" class="page">
+      <header class="dashboard-hero">
+        <div>
+          <p class="eyebrow">OUTREACH</p>
+          <h1>Email conversations</h1>
+          <p class="sub">Responses classified by Instantly. Read and review — no CRM changes.</p>
+        </div>
+        <div class="hero-actions">
+          <button class="secondary" id="sync">
+            <i class="ui-icon sync-icon"></i>
+            <span>Sync Instantly</span>
+          </button>
+          <span class="user-orb" title="Current User">CJ<i></i></span>
+        </div>
+      </header>
+
+      <section class="metrics">
+        <article class="metric-card good">
+          <div class="metric-card-content">
+            <span>Interested</span>
+            <strong id="interested">0</strong>
+          </div>
+          <small class="metric-trend">0%</small>
+        </article>
+        <article class="metric-card bad">
+          <div class="metric-card-content">
+            <span>Not Interested</span>
+            <strong id="notInterested">0</strong>
+          </div>
+          <small class="metric-trend">0%</small>
+        </article>
+        <article class="metric-card response">
+          <div class="metric-card-content">
+            <span>Responses</span>
+            <strong id="responses">0</strong>
+          </div>
+          <small class="metric-trend">0%</small>
+        </article>
+      </section>
+
+      <section class="toolbar">
+        <div class="filters">
+          <button class="filter active" data-email-filter="all">
+            <span>All responses</span>
+            <b id="allCount">0</b>
+          </button>
+          <button class="filter" data-email-filter="interested">
+            <i class="dot green"></i>
+            <span>Interested</span>
+            <b id="interestedCount">0</b>
+          </button>
+          <button class="filter" data-email-filter="not_interested">
+            <i class="dot red"></i>
+            <span>Not Interested</span>
+            <b id="notInterestedCount">0</b>
+          </button>
+        </div>
+        <div class="search-wrap">
+          <i class="ui-icon search-icon"></i>
+          <input class="page-search" id="emailSearch" placeholder="Search sender or company..." autocomplete="off">
+        </div>
+      </section>
+
+      <section class="card response-table">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 40px;"><input type="checkbox" aria-label="Select all responses"></th>
+                <th>Sender</th>
+                <th>Company</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="emailRows"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="emptyEmails">
+          <h2>No classified responses yet</h2>
+          <p>Sync Instantly to retrieve Interested and Not interested emails.</p>
+        </div>
+        <footer class="table-footer">
+          <span id="resultSummary">Showing 0 results</span>
+          <div>
+            <button aria-label="Previous page">Previous</button>
+            <button class="current-page">1</button>
+            <button aria-label="Next page">Next</button>
+          </div>
+        </footer>
+      </section>
+    </section>
+
+    <!-- LEADS PAGE -->
+    <section id="leadsPage" class="page" hidden>
+      <header>
+        <div>
+          <p class="eyebrow">CRM</p>
+          <h1>Leads</h1>
+          <p class="sub">Manage your lead database. Importing always adds; it never replaces existing leads.</p>
+        </div>
+        <div class="actions">
+          <button class="secondary" id="copyPrompt"><i class="ui-icon copy-icon"></i><span>Copy AI Prompt</span></button>
+          <button class="secondary" id="export">Export CSV</button>
+          <label class="upload">Import CSV<input id="csv" type="file" accept=".csv"></label>
+          <button class="primary" id="add">+ Add Lead</button>
+        </div>
+      </header>
+
+      <section class="toolbar">
+        <div class="filters">
+          <button class="secondary" id="exportSelected">Export selected</button>
+          <button class="secondary danger" id="deleteSelected"><i class="ui-icon trash-icon" style="filter: brightness(0) saturate(100%) invert(32%) sepia(85%) saturate(3065%) hue-rotate(338deg) brightness(98%) contrast(92%);"></i><span>Delete selected</span></button>
+        </div>
+        <div class="search-wrap">
+          <i class="ui-icon search-icon"></i>
+          <input class="page-search" id="leadSearch" placeholder="Search name, company, email, title..." autocomplete="off">
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 40px;"><input id="selectAll" type="checkbox" aria-label="Select all leads"></th>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Job title</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Country</th>
+                <th>Source</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leadRows"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="emptyLeads">
+          <h2>Your CRM is empty</h2>
+          <p>Add a lead or import a CSV to begin.</p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- MODALS -->
+
+  <!-- LEAD FORM MODAL -->
+  <dialog id="leadModal">
+    <form id="leadForm" novalidate>
+      <button class="close" type="button" id="closeLeadModal" aria-label="Close">×</button>
+      <p class="eyebrow">CRM CONTACT</p>
+      <h2 id="formTitle">Add lead</h2>
+      <p class="form-intro">Add the useful details now — you can always complete the profile later.</p>
+      
+      <div class="form-grid">
+        <label>Full name<input name="name" placeholder="Samira El Idrissi"></label>
+        <label>Company<input name="company" placeholder="Company name"></label>
+        <label>Job title<input name="jobTitle" placeholder="Head of growth"></label>
+        <label>Email <span class="required">*Required</span><input name="email" type="email" placeholder="samira@company.com" required></label>
+        <label>Phone<input name="phone" placeholder="+212 …"></label>
+        <label>Website<input name="website" placeholder="company.com"></label>
+        <label>LinkedIn<input name="linkedin" placeholder="linkedin.com/in/…"></label>
+        <label>Country<input name="country" placeholder="Morocco"></label>
+        <label>City<input name="city" placeholder="Casablanca"></label>
+        <label>Industry<input name="industry" placeholder="Hospitality"></label>
+        <label>Source<input name="source" placeholder="Referral, event…"></label>
+      </div>
+      
+      <label class="notes-label">Notes<textarea name="notes" placeholder="Context, opportunity, or follow-up notes…"></textarea></label>
+      
+      <div class="form-actions">
+        <button class="secondary" type="button" id="cancelLeadModal">Cancel</button>
+        <button class="primary" type="submit">Save lead</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- CSV IMPORT MODAL -->
+  <dialog id="importModal">
+    <div class="mail-modal">
+      <button class="close" onclick="document.querySelector('#importModal').close()" aria-label="Close">×</button>
+      <p class="eyebrow">CSV IMPORT</p>
+      <h2>Review import</h2>
+      <p class="sub" id="importSummary" style="margin-bottom: 16px;"></p>
+      <div class="table-wrap" style="max-height: 260px; margin-bottom: 20px;">
+        <table>
+          <thead>
+            <tr id="importHeaders"></tr>
+          </thead>
+          <tbody id="importPreview"></tbody>
+        </table>
+      </div>
+      <button class="primary" id="confirmImport" style="width: 100%;">Import valid rows</button>
+    </div>
+  </dialog>
+
+  <!-- MAIL MODAL -->
+  <dialog id="mailModal">
+    <div class="mail-modal">
+      <button class="close" onclick="document.querySelector('#mailModal').close()" aria-label="Close">×</button>
+      <p class="eyebrow" id="mailMeta">INSTANTLY MAIL</p>
+      <h2 id="mailTitle">Conversation</h2>
+      <div id="mailContent"></div>
+    </div>
+  </dialog>
+
+  <!-- CUSTOM DELETE CONFIRMATION MODAL -->
+  <dialog id="deleteModal">
+    <div class="confirm-modal-body">
+      <div class="confirm-icon-wrap danger">
+        <i class="ui-icon trash-icon"></i>
+      </div>
+      <h2 id="deleteModalTitle">Delete Leads</h2>
+      <p class="sub" id="deleteModalDesc" style="margin-bottom: 24px;">Are you sure you want to delete the selected leads? This action cannot be undone.</p>
+      <div class="form-actions" style="justify-content: center; gap: 12px;">
+        <button class="secondary" type="button" id="cancelDeleteModal">Cancel</button>
+        <button class="primary danger-btn" type="button" id="confirmDeleteBtn">Yes, Delete</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- TEAM EMAIL NOTIFICATION ALERTS MODAL -->
+  <dialog id="notificationsModal">
+    <div class="mail-modal">
+      <button class="close" type="button" id="closeNotificationsModal" aria-label="Close">×</button>
+      <p class="eyebrow">REAL EMAIL ALERTS</p>
+      <h2>Team Email Subscriptions</h2>
+      <p class="sub" style="margin-bottom: 20px;">Subscribed team members will receive a real email in their inbox as soon as an outreach reply is classified as <strong>Interested</strong>.</p>
+      
+      <form id="subscribeForm" style="padding: 0; margin-bottom: 20px;">
+        <div style="display: flex; gap: 8px;">
+          <input type="email" id="subscriberEmailInput" placeholder="team.member@vcode.ma" required style="flex: 1;">
+          <button class="primary" type="submit" style="white-space: nowrap;">+ Add Email</button>
+        </div>
+      </form>
+
+      <div class="subscribers-list-wrap">
+        <label style="margin-bottom: 8px; display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono);">Subscribed Team Inboxes (<span id="subscriberCount">0</span>)</label>
+        <ul id="subscribersList" class="subscribers-list"></ul>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast"><i class="ui-icon copy-icon" style="filter: brightness(0) invert(1);"></i><span id="toastMsg">AI Lead Gen Prompt copied to clipboard!</span></div>
+
+  <!-- FLOATING INTERACTIVE MASCOT COMPANION (BOTTOM RIGHT CORNER) -->
+  <div id="mascotCompanion" class="mascot-companion" aria-label="VCode Assistant Mascot" hidden>
+    <div id="mascotBubble" class="mascot-speech-bubble" hidden>
+      <span id="mascotBubbleText">Hey there! Ready to crush some leads?</span>
+      <button id="closeMascotBubble" class="mascot-bubble-close" type="button" aria-label="Dismiss message">&times;</button>
+    </div>
+    <div class="mascot-avatar-btn" id="mascotInteractiveBtn" role="button" tabindex="0" title="Click to interact with VCode mascot">
+      <img id="mascotImg" src="avatar/red/idle.gif" alt="VCode Assistant Mascot" class="mascot-img">
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
